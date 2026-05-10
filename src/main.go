@@ -15,6 +15,7 @@ import (
 	"github.com/brutella/can"
 	MQTT "github.com/eclipse/paho.mqtt.golang"
 	"github.com/jaster-prj/can2mqtt/config"
+	"github.com/jaster-prj/can2mqtt/persistence"
 )
 
 var (
@@ -41,12 +42,27 @@ func main() {
 	canPublishChannel := make(chan can.Frame, 10)
 	mqttPublishChannel := make(chan MqttPublish, 10)
 
-	slog.Info("Starting can2mqtt", "version", version, "mqtt-config", appConfig.MqttConnection, "can-interface", appConfig.Device, "debug", debugLog)
+	slog.Info(
+		"Starting can2mqtt",
+		"version",
+		version,
+		"mqtt-config",
+		appConfig.MqttConnection,
+		"can-interface",
+		appConfig.Device,
+		"debug",
+		debugLog,
+	)
 	wg.Add(1)
 	converterFactory := NewConverterFactory()
 	routing := config.NewRouting()
 	updater := config.NewUpdate().
 		WithRouting(routing)
+	persist, err := persistence.NewPersistence()
+	if err != nil {
+		slog.Error("Failed to initialize persistence", "error", err)
+		persist = nil
+	}
 	canListener := NewCanListener().
 		WithConverter(converterFactory).
 		WithOptions(&CanOptions{Interface: appConfig.Device}).
@@ -64,7 +80,9 @@ func main() {
 	}
 
 	// create MQTT Client
-	clientSettings := MQTT.NewClientOptions().AddBroker(protocol + "://" + appConfig.MqttConnection.Url + port).SetResumeSubs(true)
+	clientSettings := MQTT.NewClientOptions().
+		AddBroker(protocol + "://" + appConfig.MqttConnection.Url + port).
+		SetResumeSubs(true)
 	clientSettings.SetClientID(appConfig.MqttConnection.ClientName)
 	if appConfig.MqttConnection.Username != nil {
 		clientSettings.SetUsername(*appConfig.MqttConnection.Username)
@@ -83,6 +101,9 @@ func main() {
 
 	updater.RegisterCallback(mqttListener.UpdateConfiguration)
 	updater.RegisterCallback(canListener.UpdateConfiguration)
+	if persist != nil {
+		updater.WithPersistence(persist)
+	}
 
 	canListener.Run()
 	mqttListener.Run()

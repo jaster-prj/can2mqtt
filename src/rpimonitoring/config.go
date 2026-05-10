@@ -7,8 +7,6 @@ import (
 	"log/slog"
 	"os"
 	"strconv"
-
-	"github.com/jaster-prj/can2mqtt/common"
 )
 
 type AppConfig struct {
@@ -52,10 +50,10 @@ func GetConfiguration() AppConfig {
 		}
 	}
 	if os.Getenv("MQTTUSERNAME") != "" {
-		appConfig.MqttConnection.Username = common.POINTER(os.Getenv("MQTTUSERNAME"))
+		appConfig.MqttConnection.Username = new(os.Getenv("MQTTUSERNAME"))
 	}
 	if os.Getenv("MQTTPASSWORD") != "" {
-		appConfig.MqttConnection.Password = common.POINTER(os.Getenv("MQTTPASSWORD"))
+		appConfig.MqttConnection.Password = new(os.Getenv("MQTTPASSWORD"))
 	}
 	return appConfig
 }

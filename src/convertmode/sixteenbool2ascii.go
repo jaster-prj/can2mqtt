@@ -20,7 +20,7 @@ func (_ SixteenBool2Ascii) ToCan(input []byte) (can.Frame, error) {
 		return can.Frame{}, errors.New("input does not contain exactly 16 numbers seperated by spaces")
 	}
 	var returnData [8]uint8
-	for i := 0; i < len(splitInput); i++ {
+	for i := range splitInput {
 		res, err := strconv.ParseBool(splitInput[i])
 		if err != nil {
 			return can.Frame{}, errors.New(fmt.Sprintf("input does not specify a boolean at index %d: %s:%s", i, splitInput[i], err))
@@ -36,7 +36,7 @@ func (_ SixteenBool2Ascii) ToCan(input []byte) (can.Frame, error) {
 }
 func (_ SixteenBool2Ascii) ToMqtt(input can.Frame) ([]byte, error) {
 	var returnStrings [16]string
-	for i := 0; i < 16; i++ {
+	for i := range 16 {
 		if (input.Data[i>>3]>>(i%8))&0x1 == 1 {
 			returnStrings[i] = "1"
 		} else {

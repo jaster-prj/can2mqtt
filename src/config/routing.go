@@ -3,8 +3,6 @@ package config
 import (
 	"errors"
 	"fmt"
-
-	"github.com/jaster-prj/can2mqtt/common"
 )
 
 type Routing struct {
@@ -62,7 +60,7 @@ func (r *Routing) GetRouteByCanId(canId string) (*Route, error) {
 	if !ok {
 		return nil, errors.New("route not in configuration")
 	}
-	return common.POINTER(r.routeMap[hash]), nil
+	return new(r.routeMap[hash]), nil
 }
 
 func (r *Routing) GetRouteByMqttTopic(topic string) (*Route, error) {
@@ -70,7 +68,7 @@ func (r *Routing) GetRouteByMqttTopic(topic string) (*Route, error) {
 	if !ok {
 		return nil, errors.New("route not in configuration")
 	}
-	return common.POINTER(r.routeMap[hash]), nil
+	return new(r.routeMap[hash]), nil
 }
 
 func (r *Routing) AddRoutes(routes []Route) error {

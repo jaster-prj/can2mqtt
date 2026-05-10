@@ -20,7 +20,7 @@ func TestNoneToCan(t *testing.T) {
 	}
 
 	// Check if the output has the correct content
-	for i := 0; i < len(input); i++ {
+	for i := range input {
 		if output.Data[i] != input[i] {
 			t.Fatalf(`NoneToCan failed, output wrong at byte %d`, i)
 		}
@@ -90,7 +90,7 @@ func FuzzNoneToCan(f *testing.F) {
 				t.Fatalf(`NoneToCan failed, expected length  %d, actual length %d`, len(input), output.Length)
 			}
 			// Check if the output has the correct content
-			for i := 0; i < 8; i++ {
+			for i := range 8 {
 				if output.Data[i] != input[i] {
 					t.Fatalf(`NoneToCan failed, output wrong at byte %d`, i)
 				}
@@ -111,7 +111,7 @@ func FuzzNoneToCan(f *testing.F) {
 				t.Fatalf(`NoneToCan failed, expected length  %d, actual length %d`, len(input), output.Length)
 			}
 			// Check if the output has the correct content
-			for i := 0; i < len(input); i++ {
+			for i := range input {
 				if output.Data[i] != input[i] {
 					t.Fatalf(`NoneToCan failed, output wrong at byte %d`, i)
 				}
@@ -154,7 +154,7 @@ func FuzzNoneToMqtt(f *testing.F) {
 				t.Fatalf(`NoneToMqtt failed, expected length  %d, actual length %d`, input.Length, len(output))
 			}
 			// Check if the output has the correct content
-			for i := 0; i < 8; i++ {
+			for i := range 8 {
 				if output[i] != input.Data[i] {
 					t.Fatalf(`NoneToMqtt failed, output wrong at byte %d`, i)
 				}
@@ -166,7 +166,7 @@ func FuzzNoneToMqtt(f *testing.F) {
 			}
 
 			// only first 8 bytes are important
-			for i := uint8(0); i < 8; i++ {
+			for i := range uint8(8) {
 				if input.Data[i] != back.Data[i] {
 					t.Fatalf(`NoneToCan failed, back and forth conversion did not lead to original input`)
 				}
