@@ -1,14 +1,24 @@
 {
-  "name": "CAN2MQTT",
-  "image": "devcontainer-go-dev:latest",
+  "name": "CANOPENREST",
+  "image": "ghcr.io/jaster-prj/devcontainer-go-base:latest",
   "runArgs": [
-    "--name=CAN2MQTT_Devcontainer"
+    "--name",
+    "CAN2MQTT_Devcontainer"
   ],
   "customizations": {
     // Configure properties specific to VS Code.
     "vscode": {
       // Add the IDs of extensions you want installed when the container is created.
-      "extensions": ["golang.Go"]
+      "extensions": [
+        "golang.Go"
+      ],
+      "settings": {
+        "extensions.verifySignature": false,
+        "go.formatTool": "custom",
+        "go.alternateTools": {
+          "customFormatter": "golines"
+        }
+      }
     }
   }
 }
