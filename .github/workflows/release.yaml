@@ -8,11 +8,19 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        goos: [linux, darwin]
+        goos: [linux, darwin, windows]
         goarch: [amd64, arm64, arm]
+        goarm: [""] # Only relevant for arm architecture
         exclude:
           - goos: darwin
             goarch: arm
+        include:
+          - goos: linux
+            goarch: arm
+            goarm: "6"
+          - goos: linux
+            goarch: arm
+            goarm: "7"
     steps:
     - uses: actions/checkout@v3
     - uses: wangyoucao577/go-release-action@v1.49
@@ -20,6 +28,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
+        goarm: ${{ matrix.goarm }}
         goversion: 1.26.3
         binary_name: can2mqtt
         compress_assets: false

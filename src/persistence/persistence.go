@@ -23,9 +23,9 @@ type Persistence struct {
 func NewPersistence() (*Persistence, error) {
 
 	var err error
-	basePath := os.Getenv("CAN2MQTT_STORAGE")
+	basePath := os.Getenv("CAN2MQTT_CACHE")
 	if basePath == "" {
-		basePath, err = os.UserConfigDir()
+		basePath, err = os.UserCacheDir()
 		if err != nil {
 			return nil, err
 		}
