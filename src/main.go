@@ -25,7 +25,7 @@ var (
 )
 
 func onConnectionLost(c MQTT.Client, e error) {
-	slog.Debug(fmt.Sprintf("MQTT: Connection lost. %s", e.Error()))
+	slog.Debug("MQTT: Connection lost", "error", e.Error())
 }
 
 func onReconnecting(c MQTT.Client, o *MQTT.ClientOptions) {

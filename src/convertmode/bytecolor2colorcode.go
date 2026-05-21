@@ -17,7 +17,12 @@ func (_ ByteColor2ColorCode) String() string {
 func (_ ByteColor2ColorCode) ToCan(input []byte) (can.Frame, error) {
 	colorBytes, _ := strings.CutPrefix(string(input), "#")
 	if len(colorBytes) != 6 {
-		return can.Frame{}, errors.New(fmt.Sprintf("input does not contain exactly 6 nibbles each represented by one character, got %d instead", len(colorBytes)))
+		return can.Frame{}, errors.New(
+			fmt.Sprintf(
+				"input does not contain exactly 6 nibbles each represented by one character, got %d instead",
+				len(colorBytes),
+			),
+		)
 	}
 	res, err := hex.DecodeString(colorBytes)
 	if err != nil {
@@ -30,7 +35,9 @@ func (_ ByteColor2ColorCode) ToCan(input []byte) (can.Frame, error) {
 
 func (_ ByteColor2ColorCode) ToMqtt(input can.Frame) ([]byte, error) {
 	if input.Length != 3 {
-		return []byte{}, errors.New(fmt.Sprintf("Input does not contain exactly 3 bytes, got %d instead", input.Length))
+		return []byte{}, errors.New(
+			fmt.Sprintf("Input does not contain exactly 3 bytes, got %d instead", input.Length),
+		)
 	}
 	colorstring := hex.EncodeToString(input.Data[0:3])
 	return []byte("#" + colorstring), nil

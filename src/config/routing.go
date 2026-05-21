@@ -75,7 +75,10 @@ func (r *Routing) AddRoutes(routes []Route) error {
 	var ret error
 	for _, route := range routes {
 		if err := r.AddRoute(route); err != nil {
-			ret = errors.Join(ret, fmt.Errorf("failed adding Route for %s: %v", route.GetHash(), err))
+			ret = errors.Join(
+				ret,
+				fmt.Errorf("failed adding Route for %s: %v", route.GetHash(), err),
+			)
 		}
 	}
 	return ret
