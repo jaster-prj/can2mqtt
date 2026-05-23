@@ -14,6 +14,8 @@ jobs:
         exclude:
           - goos: darwin
             goarch: arm
+          - goos: windows
+            goarch: arm
         include:
           - goos: linux
             goarch: arm

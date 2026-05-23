@@ -11,15 +11,17 @@ import (
 )
 
 type Updater struct {
-	routing     *Routing
-	persistence *persistence.Persistence
-	callbacks   []func([]Route, []Route)
+	routingConfigured bool
+	routing           *Routing
+	persistence       *persistence.Persistence
+	callbacks         []func([]Route, []Route)
 }
 
 func NewUpdate() *Updater {
 	return &Updater{
-		routing:   nil,
-		callbacks: []func([]Route, []Route){},
+		routingConfigured: false,
+		routing:           nil,
+		callbacks:         []func([]Route, []Route){},
 	}
 }
 
@@ -46,7 +48,7 @@ func (u *Updater) RegisterCallback(callback func([]Route, []Route)) {
 }
 
 func (u *Updater) ConfigUpdate(config []byte) {
-	if err := u.checkPersistence(config); err == nil {
+	if err := u.checkPersistence(config); u.routingConfigured && err == nil {
 		slog.Debug("Config update skipped due to checksum match")
 		return
 	}
@@ -67,6 +69,7 @@ func (u *Updater) ConfigUpdate(config []byte) {
 			slog.Error("Failed to persist routes", "error", err)
 		}
 	}
+	u.routingConfigured = true
 }
 
 func (u *Updater) Inform(addRoute []Route, delRoute []Route) {
