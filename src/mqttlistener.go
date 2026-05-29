@@ -139,6 +139,7 @@ func (m *MqttListener) SubscribeConfig(callback func(config []byte)) {
 func (m *MqttListener) Subscribe(ident string) {
 	if m.client == nil {
 		slog.Debug("client not connected")
+		return
 	}
 	client := (*m.client)
 	if token := client.Subscribe(ident, 0, nil); token.Wait() && token.Error() != nil {
