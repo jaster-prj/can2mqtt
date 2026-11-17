@@ -50,6 +50,8 @@ func main() {
 		appConfig.MqttConnection,
 		"can-interface",
 		appConfig.Device,
+		"can-transport",
+		appConfig.Transport,
 		"debug",
 		debugLog,
 	)
@@ -65,7 +67,11 @@ func main() {
 	}
 	canListener := NewCanListener().
 		WithConverter(converterFactory).
-		WithOptions(&CanOptions{Interface: appConfig.Device}).
+		WithOptions(&CanOptions{
+			Interface: appConfig.Device,
+			Transport: appConfig.Transport,
+			UDPListen: appConfig.UDPListen,
+		}).
 		WithPublishCanChannel(canPublishChannel).
 		WithPublishMqttChannel(mqttPublishChannel).
 		WithRouting(routing)

@@ -1,6 +1,6 @@
 module github.com/jaster-prj/can2mqtt
 
-go 1.26.3
+go 1.27.4
 
 require (
 	github.com/brutella/can v0.0.2
@@ -9,7 +9,7 @@ require (
 
 require (
 	github.com/gorilla/websocket v1.5.3 // indirect
-	golang.org/x/net v0.54.0 // indirect
-	golang.org/x/sync v0.20.0 // indirect
-	golang.org/x/sys v0.44.0 // indirect
+	golang.org/x/net v0.63.0 // indirect
+	golang.org/x/sync v0.25.0 // indirect
+	golang.org/x/sys v0.50.0 // indirect
 )
