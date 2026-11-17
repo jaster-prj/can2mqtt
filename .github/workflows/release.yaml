@@ -31,7 +31,7 @@ jobs:
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
         goarm: ${{ matrix.goarm }}
-        goversion: 1.26.3
+        goversion: 1.27.4
         binary_name: can2mqtt
         compress_assets: false
         project_path: src
