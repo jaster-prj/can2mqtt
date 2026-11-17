@@ -17,13 +17,22 @@ func (_ SixteenBool2Ascii) String() string {
 func (_ SixteenBool2Ascii) ToCan(input []byte) (can.Frame, error) {
 	splitInput := strings.Split(string(input), " ") // TODO use strings.Fields here
 	if len(splitInput) != 16 {
-		return can.Frame{}, errors.New("input does not contain exactly 16 numbers seperated by spaces")
+		return can.Frame{}, errors.New(
+			"input does not contain exactly 16 numbers seperated by spaces",
+		)
 	}
 	var returnData [8]uint8
 	for i := range splitInput {
 		res, err := strconv.ParseBool(splitInput[i])
 		if err != nil {
-			return can.Frame{}, errors.New(fmt.Sprintf("input does not specify a boolean at index %d: %s:%s", i, splitInput[i], err))
+			return can.Frame{}, errors.New(
+				fmt.Sprintf(
+					"input does not specify a boolean at index %d: %s:%s",
+					i,
+					splitInput[i],
+					err,
+				),
+			)
 		}
 		if res {
 			returnData[i>>3] |= 0x1 << (i % 8)

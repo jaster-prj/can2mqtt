@@ -16,7 +16,11 @@ func TestNoneToCan(t *testing.T) {
 
 	// Check whether the output has the correct length
 	if output.Length != (uint8(len(input))) {
-		t.Fatalf(`NoneToCan failed, expected length  %d, actual length %d`, len(input), output.Length)
+		t.Fatalf(
+			`NoneToCan failed, expected length  %d, actual length %d`,
+			len(input),
+			output.Length,
+		)
 	}
 
 	// Check if the output has the correct content
@@ -55,7 +59,11 @@ func TestNoneToMqtt(t *testing.T) {
 
 	// Check whether the output has the correct length
 	if uint8(len(output)) != input.Length {
-		t.Fatalf(`NoneToMqtt failed, expected length  %d, actual length %d`, input.Length, uint8(len(output)))
+		t.Fatalf(
+			`NoneToMqtt failed, expected length  %d, actual length %d`,
+			input.Length,
+			uint8(len(output)),
+		)
 	}
 
 	// Check if the output has the correct content
@@ -84,10 +92,18 @@ func FuzzNoneToCan(f *testing.F) {
 		}
 
 		if len(input) > 8 {
-			t.Logf("input (%s) is larger than 8 bytes (%d), only checking first 8 byte", input, len(input))
+			t.Logf(
+				"input (%s) is larger than 8 bytes (%d), only checking first 8 byte",
+				input,
+				len(input),
+			)
 			// Check whether the output has the correct length
 			if output.Length != 8 {
-				t.Fatalf(`NoneToCan failed, expected length  %d, actual length %d`, len(input), output.Length)
+				t.Fatalf(
+					`NoneToCan failed, expected length  %d, actual length %d`,
+					len(input),
+					output.Length,
+				)
 			}
 			// Check if the output has the correct content
 			for i := range 8 {
@@ -103,7 +119,9 @@ func FuzzNoneToCan(f *testing.F) {
 
 			// only first 8 bytes are important
 			if string(input[:8]) != string(back) {
-				t.Fatalf(`NoneToCan failed, back and forth conversion did not lead to original input`)
+				t.Fatalf(
+					`NoneToCan failed, back and forth conversion did not lead to original input`,
+				)
 			}
 		} else {
 			// Check whether the output has the correct length
@@ -148,10 +166,17 @@ func FuzzNoneToMqtt(f *testing.F) {
 		}
 
 		if input.Length > 8 {
-			t.Logf("input.Length (%d) is larger than 8 bytes, only checking first 8 byte", input.Length)
+			t.Logf(
+				"input.Length (%d) is larger than 8 bytes, only checking first 8 byte",
+				input.Length,
+			)
 			// Check whether the output has the correct length
 			if len(output) != 8 {
-				t.Fatalf(`NoneToMqtt failed, expected length  %d, actual length %d`, input.Length, len(output))
+				t.Fatalf(
+					`NoneToMqtt failed, expected length  %d, actual length %d`,
+					input.Length,
+					len(output),
+				)
 			}
 			// Check if the output has the correct content
 			for i := range 8 {
@@ -168,7 +193,9 @@ func FuzzNoneToMqtt(f *testing.F) {
 			// only first 8 bytes are important
 			for i := range uint8(8) {
 				if input.Data[i] != back.Data[i] {
-					t.Fatalf(`NoneToCan failed, back and forth conversion did not lead to original input`)
+					t.Fatalf(
+						`NoneToCan failed, back and forth conversion did not lead to original input`,
+					)
 				}
 			}
 		} else {

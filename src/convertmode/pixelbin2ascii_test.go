@@ -17,7 +17,11 @@ func TestPixelBin2AsciiToCan(t *testing.T) {
 
 	// Check whether the output has the correct length
 	if int(output.Length) != len(expected_output) {
-		t.Fatalf(`PixelBin2AsciiToCan failed, expected length  %d, actual length %d`, len(expected_output), output.Length)
+		t.Fatalf(
+			`PixelBin2AsciiToCan failed, expected length  %d, actual length %d`,
+			len(expected_output),
+			output.Length,
+		)
 	}
 
 	// Check if the output has the correct content
@@ -34,7 +38,11 @@ func TestPixelBin2AsciiToCan(t *testing.T) {
 	}
 
 	if string(input) != string(back) {
-		t.Fatalf(`PixelBin2AsciiToCan failed, back and forth conversion (%s) did not lead to original input (%s)`, string(back), string(input))
+		t.Fatalf(
+			`PixelBin2AsciiToCan failed, back and forth conversion (%s) did not lead to original input (%s)`,
+			string(back),
+			string(input),
+		)
 	}
 }
 
@@ -57,7 +65,11 @@ func TestPixelBin2AsciiToMqtt(t *testing.T) {
 
 	// Check if the output has the correct content
 	if string(output) != expected_output {
-		t.Fatalf(`PixelBin2AsciiToCan failed, expected output: %s, actual output: %s`, expected_output, string(output))
+		t.Fatalf(
+			`PixelBin2AsciiToCan failed, expected output: %s, actual output: %s`,
+			expected_output,
+			string(output),
+		)
 	}
 
 	// Check if back and forth conversion leads to original input
@@ -67,6 +79,8 @@ func TestPixelBin2AsciiToMqtt(t *testing.T) {
 	}
 
 	if input != back {
-		t.Fatalf(`PixelBin2AsciiToCan failed, back and forth conversion did not lead to original input`)
+		t.Fatalf(
+			`PixelBin2AsciiToCan failed, back and forth conversion did not lead to original input`,
+		)
 	}
 }

@@ -282,9 +282,18 @@ func TestRouting_CompareRoutes(t *testing.T) {
 		{
 			name: "Compare routes",
 			routing: &Routing{
-				routeMap: map[string]Route{exampleRoute.GetHash(): exampleRoute, exampleRoute2.GetHash(): exampleRoute2},
-				canMap:   map[string]string{exampleRoute.CanID: exampleRoute.GetHash(), exampleRoute2.CanID: exampleRoute2.GetHash()},
-				mqttMap:  map[string]string{exampleRoute.Topic: exampleRoute.GetHash(), exampleRoute2.Topic: exampleRoute2.GetHash()},
+				routeMap: map[string]Route{
+					exampleRoute.GetHash():  exampleRoute,
+					exampleRoute2.GetHash(): exampleRoute2,
+				},
+				canMap: map[string]string{
+					exampleRoute.CanID:  exampleRoute.GetHash(),
+					exampleRoute2.CanID: exampleRoute2.GetHash(),
+				},
+				mqttMap: map[string]string{
+					exampleRoute.Topic:  exampleRoute.GetHash(),
+					exampleRoute2.Topic: exampleRoute2.GetHash(),
+				},
 			},
 			args:    args{routes: []Route{exampleRoute, exampleRoute3}},
 			want:    []Route{exampleRoute3},

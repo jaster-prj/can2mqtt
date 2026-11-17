@@ -1,5 +1,5 @@
 {
-  "name": "CANOPENREST",
+  "name": "CAN2MQTT",
   "image": "ghcr.io/jaster-prj/devcontainer-go-base:latest",
   "runArgs": [
     "--name",

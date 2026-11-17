@@ -85,10 +85,22 @@ func (m *MqttListener) Run() {
 			select {
 			case publish := <-m.publishMqtt:
 				m.Unsubscribe(publish.Topic)
-				slog.Debug("mqtt: publishing message", "payload", publish.Payload, "topic", publish.Topic)
+				slog.Debug(
+					"mqtt: publishing message",
+					"payload",
+					publish.Payload,
+					"topic",
+					publish.Topic,
+				)
 				token := client.Publish(publish.Topic, 0, false, publish.Payload)
 				token.Wait()
-				slog.Debug("mqtt: published message", "payload", publish.Payload, "topic", publish.Topic)
+				slog.Debug(
+					"mqtt: published message",
+					"payload",
+					publish.Payload,
+					"topic",
+					publish.Topic,
+				)
 				m.Subscribe(publish.Topic)
 			}
 			if m.publishMqtt == nil {
