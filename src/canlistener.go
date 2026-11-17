@@ -13,11 +13,14 @@ import (
 
 type CanOptions struct {
 	Interface string
+	Transport string
+	UDPListen string
 }
 
 type CanListener struct {
 	running     bool
 	bus         *can.Bus // CAN-Bus pointer
+	udp         *UDPTransport
 	options     *CanOptions
 	lock        sync.Mutex          // CAN subscribed IDs Mutex
 	csi         map[uint32]struct{} // subscribed IDs slice
@@ -72,33 +75,56 @@ func (c *CanListener) Run() {
 		slog.Error("canbus: error while initializing CAN-Bus: no options defined")
 		os.Exit(1)
 	}
-	slog.Debug("canbus: initializing CAN-Bus", "interface", c.options.Interface)
-	c.bus, err = can.NewBusForInterfaceWithName(c.options.Interface)
-	if err != nil {
-		slog.Error("canbus: error while initializing CAN-Bus", "interface", c.options.Interface, "error", err)
-		os.Exit(1)
-	}
-	slog.Info("canbus: connected to CAN")
-	slog.Debug("canbus: registering handler")
-	c.bus.SubscribeFunc(c.handleCANFrame)
-	slog.Debug("canbus: starting receive loop")
-	// will not return if everything is fine
-	go func() {
-		c.running = true
-		err = c.bus.ConnectAndPublish()
-		if err != nil {
-			slog.Error("canbus: error while processing CAN-Bus", "error", err)
+	if c.options.Transport == "udp" {
+		listen := c.options.UDPListen
+		if listen == "" {
+			listen = ":46100"
+		}
+		c.udp = NewUDPTransport(listen)
+		if err := c.udp.Open(); err != nil {
+			slog.Error("canbus: error while opening UDP CAN gateway", "listen", listen, "error", err)
 			os.Exit(1)
 		}
-		c.running = false
-		close(c.publishCan)
-	}()
+		c.running = true
+		go func() {
+			for frame := range c.udp.ReadChan() {
+				c.handleCANFrame(*frame)
+			}
+		}()
+		slog.Info("canbus: UDP CAN gateway listening", "address", listen)
+	} else {
+		slog.Debug("canbus: initializing CAN-Bus", "interface", c.options.Interface)
+		c.bus, err = can.NewBusForInterfaceWithName(c.options.Interface)
+		if err != nil {
+			slog.Error("canbus: error while initializing CAN-Bus", "interface", c.options.Interface, "error", err)
+			os.Exit(1)
+		}
+		slog.Info("canbus: connected to CAN")
+		slog.Debug("canbus: registering handler")
+		c.bus.SubscribeFunc(c.handleCANFrame)
+		go func() {
+			c.running = true
+			err = c.bus.ConnectAndPublish()
+			if err != nil {
+				slog.Error("canbus: error while processing CAN-Bus", "error", err)
+				os.Exit(1)
+			}
+			c.running = false
+			close(c.publishCan)
+		}()
+	}
 
 	go func() {
 		for {
 			select {
 			case frame := <-c.publishCan:
 				slog.Debug("canbus: sending CAN-Frame", "frame", frame)
+				if c.udp != nil {
+					if err := c.udp.Write(&frame); err != nil {
+						slog.Error("canbus: error while sending UDP CAN frame", "error", err)
+					}
+					continue
+				}
 				// Check if ID is using more than 11-Bits:
 				if frame.ID >= 0x800 {
 					// if so, enable extended frame format
@@ -118,7 +144,11 @@ func (c *CanListener) Run() {
 
 func (c *CanListener) Stop() {
 	if c.running == true {
-		c.bus.Disconnect()
+		if c.udp != nil {
+			_ = c.udp.Close()
+		} else if c.bus != nil {
+			c.bus.Disconnect()
+		}
 		close(c.publishCan)
 		c.running = false
 	}

@@ -17,6 +17,7 @@ can2mqtt has to be configured to connect to can-device and mqtt broker. This con
 {
     "loglevel": "debug",
     "device": "/dev/can0",
+    "transport": "socketcan",
     "mqttconnection": {
         "protocol": "wss",       //default tcp
         "url": "broker.url.com", 
@@ -40,6 +41,23 @@ To start service execute binary
 ```
 ./can2mqtt
 ```
+
+### Native simulator UDP-CAN transport
+
+Set `"transport": "udp"` and `"udplisten": "0.0.0.0:46100"` to run a UDP
+gateway without a host SocketCAN interface. The equivalent environment
+variables are `TRANSPORT=udp` and `UDPLISTEN=0.0.0.0:46100`. The UDP protocol
+matches `zephyr-native-linux-udp-can`: each datagram is a 72-byte native-sim
+frame containing a little-endian CAN ID, DLC, flags, two reserved bytes, and
+64 data bytes. This is the driver's native C struct format (intended for
+little-endian hosts).
+
+The gateway learns simulator/client endpoints from incoming datagrams and
+forwards frames between them, excluding the sender. MQTT-published CAN frames
+are sent to all learned endpoints. A simulator must send at least one frame
+before MQTT-to-CAN delivery can reach it. Configure each simulator's UDP-CAN
+peer to the gateway address and assign it a unique local UDP port. The current
+`can2mqtt` conversion layer supports classic CAN payloads up to eight bytes.
 
 ## can2mqtt gateway config
 Connected to the mqtt broker, can2mqtt will subscribe to topic <br>/gateway/routes</br>. This topic expects json-formated list of routes. To be shure, can2mqtt will receive latest configuration, all configuration should be published in retain mode.

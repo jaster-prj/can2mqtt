@@ -36,6 +36,8 @@ func (r *Route) GetHash() string {
 type AppConfig struct {
 	LogLevel       *slog.Level `json:"loglevel,omitempty"`
 	Device         string      `json:"device"`
+	Transport      string      `json:"transport,omitempty"`
+	UDPListen      string      `json:"udplisten,omitempty"`
 	MqttConnection MqttConfig  `json:"mqttconnection"`
 }
 
@@ -63,6 +65,12 @@ func GetConfiguration() AppConfig {
 	}
 	if os.Getenv("DEVICE") != "" {
 		appConfig.Device = os.Getenv("DEVICE")
+	}
+	if os.Getenv("TRANSPORT") != "" {
+		appConfig.Transport = os.Getenv("TRANSPORT")
+	}
+	if os.Getenv("UDPLISTEN") != "" {
+		appConfig.UDPListen = os.Getenv("UDPLISTEN")
 	}
 	if os.Getenv("MQTTURL") != "" {
 		appConfig.MqttConnection.Url = os.Getenv("MQTTURL")
